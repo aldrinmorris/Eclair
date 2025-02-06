@@ -1,0 +1,25 @@
+env:
+  GITHUB_TOKEN: ENCRYPTED[0050262abaf78004bde33f8d84a85d64283e7af986594395000ff858d1f47f201c15346a7a6dea0d65b9a1f899a76673]
+
+task:
+  name: "Push to source code"
+  timeout_in: 60m
+  container:
+    image: alpine:edge
+    cpu: 6
+    memory: 24G
+  Setup_script:
+    - apk add git
+  Source_script:
+    - wget -q -O- https://ftp.mozilla.org/pub/firefox/releases/10.0.12esr/source/firefox-10.0.12esr.source.tar.bz2 | tar -xjf- --strip-components=1 --exclude=mozilla-esr10/LICENSE --exclude=mozilla-esr10/README.txt
+    - ls
+    - du -sh .
+  Commit_script:
+    - git config --global user.name "Aldrin Morris D. Balitbit"
+    - git config --global user.email "aldrinmorris1127@proton.me"
+    - git remote set-url origin "https://${GITHUB_TOKEN}@github.com/aldrinmorris/Eclair.git"
+    - rm .cirrus.yml
+    - git add .
+    - git commit -a -m "Éclair: pushing firefox 10.0.12esr source code"
+  Push_script:
+    - git push
